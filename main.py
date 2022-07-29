@@ -18,7 +18,7 @@ def ds():
         cj = Node(name)
         # create dataframe with LMPS from arbitrary period (30 day maximum).
         # time.sleep(10)
-        cj_lmps = cj.get_lmps(datetime(2021, 1, 1), datetime(2021, 1, 15))
+        cj_lmps = cj.get_lmps(datetime(2022, 1, 1), datetime(2022 , 1, 15))
         # time.sleep(10)
         # cj_lmps2=cj.get_lmps(datetime(2022, 1, 15), datetime(2022, 1,29 ))
         # time.sleep(10)
