@@ -46,6 +46,7 @@ def my_req():
 my_req()
 
 def my_req_int():
+    'http://oasis.caiso.com/oasisapi/SingleZip?queryname=PRC_INTVL_LMP&startdatetime=20220729T15:00-0000&enddatetime=20220729T23:00-0000&version=3&market_run_id=RTM&node=MALCHA_7_B1&resultformat=6'
     rsp=requests.get('http://oasis.caiso.com/oasisapi/SingleZip?queryname=PRC_LMP&startdatetime=20220729T15:00-0000&enddatetime=20220729T23:00-0000&version=1&market_run_id=DAM&node=MALCHA_7_B1&resultformat=6')
     z = zipfile.ZipFile(io.BytesIO(rsp.content))
     z.extractall("csv")
