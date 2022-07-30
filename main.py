@@ -7,9 +7,7 @@ from pycaiso.oasis import Node
 from datetime import datetime
 import pandas as pd
 
-df = pd.read_csv('LMPLocations.csv')
-names_lst = df['name'].tolist()
-print(names_lst[0])
+
 # cj = Node(names_lst[0])
 # cj_lmps = cj.get_lmps(datetime(2022, 1, 1), datetime(2022, 1, 30))
 # cj_lmps = cj.get_lmps(datetime(2021, 1, 1), datetime(2021, 1, 15))
@@ -17,7 +15,7 @@ print(names_lst[0])
 #print(cj_lmps.head())
 # cj = Node(name)
 # select pnode
-def ds():
+def ds(names_lst):
     for name in names_lst[3]:
         cj = Node(name)
         # create dataframe with LMPS from arbitrary period (30 day maximum).
@@ -43,13 +41,36 @@ def my_req():
     rsp=requests.get('http://oasis.caiso.com/oasisapi/SingleZip?queryname=PRC_LMP&startdatetime=20220729T15:00-0000&enddatetime=20220729T23:00-0000&version=1&market_run_id=DAM&node=MALCHA_7_B1&resultformat=6')
     z = zipfile.ZipFile(io.BytesIO(rsp.content))
     z.extractall("csv")
-my_req()
+#my_req()
 
 def my_req_int():
-    'http://oasis.caiso.com/oasisapi/SingleZip?queryname=PRC_INTVL_LMP&startdatetime=20220729T15:00-0000&enddatetime=20220729T23:00-0000&version=3&market_run_id=RTM&node=MALCHA_7_B1&resultformat=6'
-    rsp=requests.get('http://oasis.caiso.com/oasisapi/SingleZip?queryname=PRC_LMP&startdatetime=20220729T15:00-0000&enddatetime=20220729T23:00-0000&version=1&market_run_id=DAM&node=MALCHA_7_B1&resultformat=6')
-    z = zipfile.ZipFile(io.BytesIO(rsp.content))
-    z.extractall("csv")
+    df = pd.read_csv('LMPLocations.csv')
+    names_lst = df['name'].tolist()
+    print(names_lst[0])
+    for name in names_lst:
+        #'http://oasis.caiso.com/oasisapi/SingleZip?queryname=PRC_INTVL_LMP&startdatetime=20220729T15:00-0000&enddatetime=20220729T23:00-0000&version=3&market_run_id=RTM&node=MALCHA_7_B1&resultformat=6'
+        rsp=requests.get(f'http://oasis.caiso.com/oasisapi/SingleZip?queryname=PRC_INTVL_LMP&startdatetime=20220729T15:00-0000&enddatetime=20220729T23:00-0000&version=1&market_run_id=RTM&node={str(name)}&resultformat=6')
+        print(rsp.content)
+        with open ('1.csv','w') as f:
+            f.write(rsp.text)
+            f.close()
+        z = zipfile.ZipFile(io.BytesIO(rsp.content))
+        z.extractall("csv")
+        # with io.BytesIO() as buffer:
+        #     try:
+        #         buffer.write(rsp.content)
+        #         buffer.seek(0)
+        #         z: zipfile.ZipFile = zipfile.ZipFile(buffer)
+        #
+        #     except zipfile.BadZipFile as e:
+        #         print("Bad zip file", e)
+        #
+        #     else:
+        #         csv = z.open(z.namelist()[0])  # ignores all but first file in zip
+        #         df: pd.DataFrame = pd.read_csv(csv)
+        #         print(df.head(10))
+
+
 my_req_int()
 # sp15 = Node.SP15()
 # sp15_lmps = sp15.get_lmps(datetime(2021, 1, 1), datetime(2021, 1, 2))
