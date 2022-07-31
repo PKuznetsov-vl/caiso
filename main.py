@@ -12,7 +12,7 @@ import pandas as pd
 # cj_lmps = cj.get_lmps(datetime(2022, 1, 1), datetime(2022, 1, 30))
 # cj_lmps = cj.get_lmps(datetime(2021, 1, 1), datetime(2021, 1, 15))
 # cj_lmps.to_csv('tst.csv')
-#print(cj_lmps.head())
+# print(cj_lmps.head())
 # cj = Node(name)
 # select pnode
 def ds(names_lst):
@@ -20,7 +20,7 @@ def ds(names_lst):
         cj = Node(name)
         # create dataframe with LMPS from arbitrary period (30 day maximum).
         # time.sleep(10)
-        cj_lmps = cj.get_lmps(datetime(2022, 6, 1), datetime(2022 , 6, 2))
+        cj_lmps = cj.get_lmps(datetime(2022, 6, 1), datetime(2022, 6, 2))
         # time.sleep(10)
         # cj_lmps2=cj.get_lmps(datetime(2022, 1, 15), datetime(2022, 1,29 ))
         # time.sleep(10)
@@ -34,60 +34,57 @@ def ds(names_lst):
         # cj_lmps6 = cj.get_lmps(datetime(2022, 3, 15), datetime(2022, 3, 30))
         # df_f=pd.concat([cj_lmps, cj_lmps2], ignore_index=True)
         # df_f.to_csv(f'outputs/{name}.csv')
+
+
 #     cj_lmps2 = cj.get_lmps(datetime(2022, 1, 31), datetime(2022, 2, 28))
 
-#ds()
-def get_prices(nodename):
+# ds()
+def get_prices(nodename, startdate, enddate):
     rsp = requests.get(
-        f'http://oasis.caiso.com/oasisapi/SingleZip?queryname=PRC_INTVL_LMP&startdatetime=20220701T15:00-0000&enddatetime=20220730T15:00-0000&version=1&market_run_id=RTM&node={nodename}&resultformat=6')
+        f'http://oasis.caiso.com/oasisapi/SingleZip?queryname=PRC_INTVL_LMP&startdatetime={startdate}&enddatetime={enddate}&version=1&market_run_id=RTM&node={nodename}&resultformat=6',
+        timeout=135)
 
     z = zipfile.ZipFile(io.BytesIO(rsp.content))
-    print(z.namelist())
     csv = z.open(z.namelist()[0])
     df = pd.read_csv(csv)
-    print(df.head())
     return df
-
-get_prices('KERMAN_6_N001')
 
 
 def my_req():
-    rsp=requests.get('http://oasis.caiso.com/oasisapi/SingleZip?queryname=PRC_LMP&startdatetime=20220729T15:00-0000&enddatetime=20220729T23:00-0000&version=1&market_run_id=DAM&node=MALCHA_7_B1&resultformat=6')
+    rsp = requests.get(
+        'http://oasis.caiso.com/oasisapi/SingleZip?queryname=PRC_LMP&startdatetime=20220729T15:00-0000&enddatetime=20220729T23:00-0000&version=1&market_run_id=DAM&node=MALCHA_7_B1&resultformat=6')
     z = zipfile.ZipFile(io.BytesIO(rsp.content))
     z.extractall("csv")
-#my_req()
+
+
+# my_req()
 
 def my_req_int():
     df = pd.read_csv('LMPLocations.csv')
     names_lst = df['name'].tolist()
-    name=names_lst[0]
 
     for name in names_lst:
-        #time.sleep(6)
-        #'http://oasis.caiso.com/oasisapi/SingleZip?queryname=PRC_INTVL_LMP&startdatetime=20220729T15:00-0000&enddatetime=20220729T23:00-0000&version=3&market_run_id=RTM&node=MALCHA_7_B1&resultformat=6'
-        rsp=requests.get(f'http://oasis.caiso.com/oasisapi/SingleZip?queryname=PRC_INTVL_LMP&startdatetime=20220701T15:00-0000&enddatetime=20220730T15:00-0000&version=1&market_run_id=RTM&node={str(name)}&resultformat=6')
-
-        z = zipfile.ZipFile(io.BytesIO(rsp.content))
-        print(z.namelist())
-        csv = z.open(z.namelist()[0])
-        df=pd.read_csv(csv)
-        print(df.head())
-        # with io.BytesIO() as buffer:
-        #     try:
-        #         buffer.write(rsp.content)
-        #         buffer.seek(0)
-        #         z: zipfile.ZipFile = zipfile.ZipFile(buffer)
-        #
-        #     except zipfile.BadZipFile as e:
-        #         print("Bad zip file", e)
-        #
-        #     else:
-        #         csv = z.open(z.namelist()[0])  # ignores all but first file in zip
-        #         df: pd.DataFrame = pd.read_csv(csv)
-        #         print(df.head(10))
+        time.sleep(6)
+        df1 = get_prices(name, '20220401T00:00-0000', '20220715T00:00-0000')
+        time.sleep(6)
+        df2 = get_prices(name, '20220416T00:00-0000', '20220731T00:00-0000')
+        time.sleep(6)
+        df3 = get_prices(name, '20220501T00:00-0000', '20220715T00:00-0000')
+        time.sleep(6)
+        df4 = get_prices(name, '20220516T00:00-0000', '20220515T31:00-0000')
+        time.sleep(6)
+        df5 = get_prices(name, '20220601T00:00-0000', '20220615T00:00-0000')
+        time.sleep(6)
+        df6 = get_prices(name, '20220616T00:00-0000', '20220630T00:00-0000')
+        time.sleep(6)
+        df7 = get_prices(name, '20220701T00:00-0000', '20220715T00:00-0000')
+        time.sleep(6)
+        df8 = get_prices(name, '20220716T00:00-0000', '20220731T00:00-0000')
+        df_f=pd.concat([df1,df2,df3,df4,df5,df6,df7,df8],ignore_index=True)
+        df_f.to_csv(f'{name}.csv',index=False)
 
 
-#my_req_int()
+# my_req_int()
 # sp15 = Node.SP15()
 # sp15_lmps = sp15.get_lmps(datetime(2021, 1, 1), datetime(2021, 1, 2))
 # sp15_lmps.to_csv('tst.csv')
