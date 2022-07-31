@@ -65,13 +65,13 @@ def my_req_int():
 
     for name in names_lst:
         time.sleep(6)
-        df1 = get_prices(name, '20220401T00:00-0000', '20220715T00:00-0000')
+        df1 = get_prices(name, '20220401T00:00-0000', '20220415T00:00-0000')
         time.sleep(6)
-        df2 = get_prices(name, '20220416T00:00-0000', '20220731T00:00-0000')
+        df2 = get_prices(name, '20220416T00:00-0000', '20220430T00:00-0000')
         time.sleep(6)
         df3 = get_prices(name, '20220501T00:00-0000', '20220715T00:00-0000')
         time.sleep(6)
-        df4 = get_prices(name, '20220516T00:00-0000', '20220515T31:00-0000')
+        df4 = get_prices(name, '20220516T00:00-0000', '20220531T00:00-0000')
         time.sleep(6)
         df5 = get_prices(name, '20220601T00:00-0000', '20220615T00:00-0000')
         time.sleep(6)
@@ -81,10 +81,11 @@ def my_req_int():
         time.sleep(6)
         df8 = get_prices(name, '20220716T00:00-0000', '20220731T00:00-0000')
         df_f=pd.concat([df1,df2,df3,df4,df5,df6,df7,df8],ignore_index=True)
-        df_f.to_csv(f'{name}.csv',index=False)
+        print('Success')
+        df_f.to_csv(f'csv/{name}.csv',index=False)
 
 
-# my_req_int()
+my_req_int()
 # sp15 = Node.SP15()
 # sp15_lmps = sp15.get_lmps(datetime(2021, 1, 1), datetime(2021, 1, 2))
 # sp15_lmps.to_csv('tst.csv')
