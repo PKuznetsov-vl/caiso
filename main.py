@@ -37,6 +37,20 @@ def ds(names_lst):
 #     cj_lmps2 = cj.get_lmps(datetime(2022, 1, 31), datetime(2022, 2, 28))
 
 #ds()
+def get_prices(nodename):
+    rsp = requests.get(
+        f'http://oasis.caiso.com/oasisapi/SingleZip?queryname=PRC_INTVL_LMP&startdatetime=20220701T15:00-0000&enddatetime=20220730T15:00-0000&version=1&market_run_id=RTM&node={nodename}&resultformat=6')
+
+    z = zipfile.ZipFile(io.BytesIO(rsp.content))
+    print(z.namelist())
+    csv = z.open(z.namelist()[0])
+    df = pd.read_csv(csv)
+    print(df.head())
+    return df
+
+get_prices('KERMAN_6_N001')
+
+
 def my_req():
     rsp=requests.get('http://oasis.caiso.com/oasisapi/SingleZip?queryname=PRC_LMP&startdatetime=20220729T15:00-0000&enddatetime=20220729T23:00-0000&version=1&market_run_id=DAM&node=MALCHA_7_B1&resultformat=6')
     z = zipfile.ZipFile(io.BytesIO(rsp.content))
@@ -46,16 +60,18 @@ def my_req():
 def my_req_int():
     df = pd.read_csv('LMPLocations.csv')
     names_lst = df['name'].tolist()
-    print(names_lst[0])
+    name=names_lst[0]
+
     for name in names_lst:
+        #time.sleep(6)
         #'http://oasis.caiso.com/oasisapi/SingleZip?queryname=PRC_INTVL_LMP&startdatetime=20220729T15:00-0000&enddatetime=20220729T23:00-0000&version=3&market_run_id=RTM&node=MALCHA_7_B1&resultformat=6'
-        rsp=requests.get(f'http://oasis.caiso.com/oasisapi/SingleZip?queryname=PRC_INTVL_LMP&startdatetime=20220729T15:00-0000&enddatetime=20220729T23:00-0000&version=1&market_run_id=RTM&node={str(name)}&resultformat=6')
-        print(rsp.content)
-        with open ('1.csv','w') as f:
-            f.write(rsp.text)
-            f.close()
+        rsp=requests.get(f'http://oasis.caiso.com/oasisapi/SingleZip?queryname=PRC_INTVL_LMP&startdatetime=20220701T15:00-0000&enddatetime=20220730T15:00-0000&version=1&market_run_id=RTM&node={str(name)}&resultformat=6')
+
         z = zipfile.ZipFile(io.BytesIO(rsp.content))
-        z.extractall("csv")
+        print(z.namelist())
+        csv = z.open(z.namelist()[0])
+        df=pd.read_csv(csv)
+        print(df.head())
         # with io.BytesIO() as buffer:
         #     try:
         #         buffer.write(rsp.content)
@@ -71,7 +87,7 @@ def my_req_int():
         #         print(df.head(10))
 
 
-my_req_int()
+#my_req_int()
 # sp15 = Node.SP15()
 # sp15_lmps = sp15.get_lmps(datetime(2021, 1, 1), datetime(2021, 1, 2))
 # sp15_lmps.to_csv('tst.csv')
