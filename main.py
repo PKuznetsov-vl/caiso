@@ -3,14 +3,24 @@ import io
 import os
 import time
 import zipfile
-
+from dateutil import rrule
+from datetime import datetime, timedelta
 import requests
 from pycaiso.oasis import Node
 from datetime import datetime
 import pandas as pd
 
+
+#todo use date iter
 def co2():
-    pass
+
+
+    now = datetime.now()
+    hundredDaysLater = now + timedelta(days=100)
+
+    for dt in rrule.rrule(rrule.MONTHLY, dtstart=now, until=hundredDaysLater):
+        print
+        dt
 
 
 def benchmark(func):
