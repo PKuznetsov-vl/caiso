@@ -9,6 +9,9 @@ from pycaiso.oasis import Node
 from datetime import datetime
 import pandas as pd
 
+def co2():
+    pass
+
 
 def benchmark(func):
     def wrapper(*args, **kwargs):
