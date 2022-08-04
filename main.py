@@ -18,7 +18,6 @@ def get_date(_from):
     listofdays = list(map(str, listofdays))
     listofdays = list(
         map(lambda x: x.replace('-', '').replace(' ', 'T').rstrip(listofdays[0][14:]) + '00:00-0000', listofdays))
-    print(listofdays)
     return listofdays
 
 
