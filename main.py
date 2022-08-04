@@ -18,10 +18,22 @@ def co2():
     now = datetime.now()
     hundredDaysLater = now + timedelta(days=100)
 
-    for dt in rrule.rrule(rrule.MONTHLY, dtstart=now, until=hundredDaysLater):
-        print
-        dt
+    for dt in rrule.rrule(rrule.DAILY, dtstart=now, until=hundredDaysLater):
+        print(dt)
 
+
+def concate_all(path):
+
+    all_files = glob.glob(os.path.join(path, "*.csv"))
+
+    li = []
+    print(all_files)
+    for filename in all_files:
+        df = pd.read_csv(filename, index_col=None, header=0, low_memory=False)
+        li.append(df)
+
+    frame = pd.concat(li, axis=0, ignore_index=True)
+    frame.to_csv('multi.csv')
 
 def benchmark(func):
     def wrapper(*args, **kwargs):
@@ -254,14 +266,6 @@ if __name__ == '__main__':
     # print(df13.head(100))
     # df13.to_csv('tst.csv')
     #my_req_int()
-    path = '/Users/pavel/PycharmProjects/caiso/csv'  # use your path
-    all_files = glob.glob(os.path.join(path, "*.csv"))
-
-    li = []
-    print(all_files)
-    for filename in all_files:
-        df = pd.read_csv(filename, index_col=None, header=0,low_memory=False)
-        li.append(df)
-
-    frame = pd.concat(li, axis=0, ignore_index=True)
-    frame.to_csv('multi.csv')
+    # path = '/Users/pavel/PycharmProjects/caiso/csv'
+    # concate_all(path)
+    co2()
