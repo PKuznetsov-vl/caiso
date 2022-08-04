@@ -1,4 +1,6 @@
+import glob
 import io
+import os
 import time
 import zipfile
 
@@ -6,6 +8,14 @@ import requests
 from pycaiso.oasis import Node
 from datetime import datetime
 import pandas as pd
+
+
+def benchmark(func):
+    def wrapper(*args, **kwargs):
+
+        func(*args, **kwargs)
+        print('success',*args)
+    return wrapper
 
 
 def get_prices(nodename, startdate, enddate):
@@ -17,9 +27,11 @@ def get_prices(nodename, startdate, enddate):
     csv = z.open(z.namelist()[0])
     df = pd.read_csv(csv)
     return df
-
+#декоратор
 
 def get_dam(nodename, startdate, enddate):
+    # http://oasis.caiso.com/oasisapi/SingleZip?queryname=PRC_LMP&market_run_id=DAM&startdatetime=20210101T08%3A00-0000&enddatetime=20210102T08%3A00-0000&version=1&node=CAPTJACK_5_N003&resultformat=6
+
     rsp = requests.get(
         f'http://oasis.caiso.com/oasisapi/SingleZip?queryname=PRC_LMP&startdatetime={startdate}&enddatetime={enddate}&version=1&market_run_id=DAM&node={nodename}&resultformat=6')
     z = zipfile.ZipFile(io.BytesIO(rsp.content))
@@ -222,8 +234,21 @@ def my_req_DAM(name):
 
 if __name__ == '__main__':
     #my_req_one('HOLLISTR_1_N101')
-    my_req_DAM('HOLLISTR_1_N101')
-    name='HOLLISTR_1_N101'
-    # df13 = get_dam(name, '20210701T00:00-0000', '20210715T00:00-0000')
-    df13 = get_dam(name, '20210716T00:00-0000', '20210731T00:00-0000')
-    print(df13.head())
+    #my_req_DAM('HOLLISTR_1_N101')
+    # name='GRDNWEST_1_N001'
+    # # df13 = get_dam(name, '20210701T00:00-0000', '20210715T00:00-0000')
+    # df13 = get_prices(name, '20220802T04:00-0000', '20220802T05:00-0000')
+    # print(df13.head(100))
+    # df13.to_csv('tst.csv')
+    #my_req_int()
+    path = '/Users/pavel/PycharmProjects/caiso/csv'  # use your path
+    all_files = glob.glob(os.path.join(path, "*.csv"))
+
+    li = []
+    print(all_files)
+    for filename in all_files:
+        df = pd.read_csv(filename, index_col=None, header=0,low_memory=False)
+        li.append(df)
+
+    frame = pd.concat(li, axis=0, ignore_index=True)
+    frame.to_csv('multi.csv')
