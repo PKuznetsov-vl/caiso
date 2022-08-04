@@ -4,28 +4,25 @@ import os
 import time
 import zipfile
 from dateutil import rrule
-from datetime import datetime, timedelta,date
+from datetime import datetime, timedelta, date
 import requests
 from pycaiso.oasis import Node
 import pandas as pd
 
 
-
 def get_date(_from):
-
-
     now = date.fromisoformat(_from)
-    hundredDaysLater = now + timedelta(days=365)
+    end_date = now + timedelta(days=365)
 
-    listofdays=rrule.rrule(rrule.DAILY, dtstart=now, until=hundredDaysLater)
+    listofdays = rrule.rrule(rrule.DAILY, dtstart=now, until=end_date)
     listofdays = list(map(str, listofdays))
-    listofdays = list(map(lambda x: x.replace('-','').replace(' ','T').rstrip(listofdays[0][14:])+'00:00-0000', listofdays))
+    listofdays = list(
+        map(lambda x: x.replace('-', '').replace(' ', 'T').rstrip(listofdays[0][14:]) + '00:00-0000', listofdays))
     print(listofdays)
     return listofdays
 
 
 def concate_all(path):
-
     all_files = glob.glob(os.path.join(path, "*.csv"))
 
     li = []
@@ -37,11 +34,12 @@ def concate_all(path):
     frame = pd.concat(li, axis=0, ignore_index=True)
     frame.to_csv('multi.csv')
 
+
 def benchmark(func):
     def wrapper(*args, **kwargs):
-
         func(*args, **kwargs)
-        print('success',*args)
+        print('success', *args)
+
     return wrapper
 
 
@@ -67,7 +65,7 @@ def get_dam(nodename, startdate, enddate):
     return df
 
 
-def my_req_one(name,dates):
+def my_req_one(name, dates):
     # df1 = get_prices(name, '20210101T00:00-0000', '20210115T00:00-0000')
     # time.sleep(6)
     # df2 = get_prices(name, '20210116T00:00-0000', '20221231T00:00-0000')
@@ -120,37 +118,42 @@ def my_req_one(name,dates):
     # time.sleep(6)
     # df26 = get_prices(name, '20220116T00:00-0000', '20220131T00:00-0000')
     # time.sleep(6)
-    for day in dates:
-        pass
-    df27 = get_prices(name, '20220201T00:00-0000', '20220215T00:00-0000')
-    time.sleep(6)
-    df28 = get_prices(name, '20220216T00:00-0000', '20220228T00:00-0000')
-    time.sleep(6)
-    df29 = get_prices(name, '20220301T00:00-0000', '20220315T00:00-0000')
-    time.sleep(6)
-    df30 = get_prices(name, '20220316T00:00-0000', '20220331T00:00-0000')
-    time.sleep(6)
-    df31 = get_prices(name, '20220401T00:00-0000', '20220415T00:00-0000')
-    time.sleep(6)
-    df32 = get_prices(name, '20220416T00:00-0000', '20220430T00:00-0000')
-    time.sleep(6)
-    df33 = get_prices(name, '20220501T00:00-0000', '20220515T00:00-0000')
-    time.sleep(6)
-    df34 = get_prices(name, '20220515T00:00-0000', '20220531T00:00-0000')
-    time.sleep(6)
-    df35 = get_prices(name, '20220601T00:00-0000', '20220615T00:00-0000')
-    time.sleep(6)
-    df36 = get_prices(name, '20220616T00:00-0000', '20220630T00:00-0000')
-    time.sleep(6)
-    df37 = get_prices(name, '20220701T00:00-0000', '20220715T00:00-0000')
-    time.sleep(6)
-
-    df_f = pd.concat([#df13, df14, df15, df16, df17, df18, df19, df20, df21, df22, df23, df24, df25, df26,
-                     df27, df28,
-                      df29, df30, df31, df32, df33, df34, df35, df36,
-                      df37], ignore_index=True)
-    print('Success')
-    df_f.to_csv(f'csv/{name}.csv', index=False)
+    list_of_csv = []
+    for day in range(len(dates) - 1):
+        time.sleep(6)
+        df = get_prices(name, dates[day], dates[day + 1])
+        print(df.head())
+        list_of_csv.append(df)
+    print(len(list_of_csv))
+    # df27 = get_prices(name, '20220201T00:00-0000', '20220215T00:00-0000')
+    # time.sleep(6)
+    # df28 = get_prices(name, '20220216T00:00-0000', '20220228T00:00-0000')
+    # time.sleep(6)
+    # df29 = get_prices(name, '20220301T00:00-0000', '20220315T00:00-0000')
+    # time.sleep(6)
+    # df30 = get_prices(name, '20220316T00:00-0000', '20220331T00:00-0000')
+    # time.sleep(6)
+    # df31 = get_prices(name, '20220401T00:00-0000', '20220415T00:00-0000')
+    # time.sleep(6)
+    # df32 = get_prices(name, '20220416T00:00-0000', '20220430T00:00-0000')
+    # time.sleep(6)
+    # df33 = get_prices(name, '20220501T00:00-0000', '20220515T00:00-0000')
+    # time.sleep(6)
+    # df34 = get_prices(name, '20220515T00:00-0000', '20220531T00:00-0000')
+    # time.sleep(6)
+    # df35 = get_prices(name, '20220601T00:00-0000', '20220615T00:00-0000')
+    # time.sleep(6)
+    # df36 = get_prices(name, '20220616T00:00-0000', '20220630T00:00-0000')
+    # time.sleep(6)
+    # df37 = get_prices(name, '20220701T00:00-0000', '20220715T00:00-0000')
+    # time.sleep(6)
+    #
+    # df_f = pd.concat([#df13, df14, df15, df16, df17, df18, df19, df20, df21, df22, df23, df24, df25, df26,
+    #                  df27, df28,
+    #                   df29, df30, df31, df32, df33, df34, df35, df36,
+    #                   df37], ignore_index=True)
+    # print('Success')
+    # df_f.to_csv(f'csv/{name}.csv', index=False)
 
 
 def my_req_int():
@@ -255,22 +258,20 @@ def my_req_DAM(name):
     df37 = get_dam(name, '20220701T00:00-0000', '20220715T00:00-0000')
     time.sleep(6)
     df38 = get_dam(name, '20220716T00:00-0000', '20220731T00:00-0000')
-    df_f = pd.concat([df13, df14, df15, df16, df17, df18, df19, df20,df21, df22, df23, df24, df25, df26,
-                       df27, df28,df29, df30, df31, df32, df33, df34, df35, df36,df37,df38], ignore_index=True)
+    df_f = pd.concat([df13, df14, df15, df16, df17, df18, df19, df20, df21, df22, df23, df24, df25, df26,
+                      df27, df28, df29, df30, df31, df32, df33, df34, df35, df36, df37, df38], ignore_index=True)
     print('Success')
     df_f.to_csv(f'csv/{name}_DAM.csv', index=False)
 
 
 if __name__ == '__main__':
-    get_date('2021-08-05')
-    #my_req_one('HOLLISTR_1_N101')
-    #my_req_DAM('HOLLISTR_1_N101')
+    my_req_one('HOLLISTR_1_N101', get_date('2021-08-05'))
+    # my_req_DAM('HOLLISTR_1_N101')
     # name='GRDNWEST_1_N001'
     # # df13 = get_dam(name, '20210701T00:00-0000', '20210715T00:00-0000')
     # df13 = get_prices(name, '20220802T04:00-0000', '20220802T05:00-0000')
     # print(df13.head(100))
     # df13.to_csv('tst.csv')
-    #my_req_int()
+    # my_req_int()
     # path = '/Users/pavel/PycharmProjects/caiso/csv'
     # concate_all(path)
-
