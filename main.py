@@ -4,22 +4,24 @@ import os
 import time
 import zipfile
 from dateutil import rrule
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta,date
 import requests
 from pycaiso.oasis import Node
-from datetime import datetime
 import pandas as pd
 
 
-#todo use date iter
-def co2():
+
+def get_date(_from):
 
 
-    now = datetime.now()
-    hundredDaysLater = now + timedelta(days=100)
+    now = date.fromisoformat(_from)
+    hundredDaysLater = now + timedelta(days=365)
 
-    for dt in rrule.rrule(rrule.DAILY, dtstart=now, until=hundredDaysLater):
-        print(dt)
+    listofdays=rrule.rrule(rrule.DAILY, dtstart=now, until=hundredDaysLater)
+    listofdays = list(map(str, listofdays))
+    listofdays = list(map(lambda x: x.replace('-','').replace(' ','T').rstrip(listofdays[0][14:])+'00:00-0000', listofdays))
+    print(listofdays)
+    return listofdays
 
 
 def concate_all(path):
@@ -52,7 +54,7 @@ def get_prices(nodename, startdate, enddate):
     csv = z.open(z.namelist()[0])
     df = pd.read_csv(csv)
     return df
-#декоратор
+
 
 def get_dam(nodename, startdate, enddate):
     # http://oasis.caiso.com/oasisapi/SingleZip?queryname=PRC_LMP&market_run_id=DAM&startdatetime=20210101T08%3A00-0000&enddatetime=20210102T08%3A00-0000&version=1&node=CAPTJACK_5_N003&resultformat=6
@@ -65,7 +67,7 @@ def get_dam(nodename, startdate, enddate):
     return df
 
 
-def my_req_one(name):
+def my_req_one(name,dates):
     # df1 = get_prices(name, '20210101T00:00-0000', '20210115T00:00-0000')
     # time.sleep(6)
     # df2 = get_prices(name, '20210116T00:00-0000', '20221231T00:00-0000')
@@ -118,6 +120,8 @@ def my_req_one(name):
     # time.sleep(6)
     # df26 = get_prices(name, '20220116T00:00-0000', '20220131T00:00-0000')
     # time.sleep(6)
+    for day in dates:
+        pass
     df27 = get_prices(name, '20220201T00:00-0000', '20220215T00:00-0000')
     time.sleep(6)
     df28 = get_prices(name, '20220216T00:00-0000', '20220228T00:00-0000')
@@ -258,6 +262,7 @@ def my_req_DAM(name):
 
 
 if __name__ == '__main__':
+    get_date('2021-08-05')
     #my_req_one('HOLLISTR_1_N101')
     #my_req_DAM('HOLLISTR_1_N101')
     # name='GRDNWEST_1_N001'
@@ -268,4 +273,4 @@ if __name__ == '__main__':
     #my_req_int()
     # path = '/Users/pavel/PycharmProjects/caiso/csv'
     # concate_all(path)
-    co2()
+
