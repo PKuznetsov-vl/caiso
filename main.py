@@ -9,7 +9,7 @@ import requests
 from pycaiso.oasis import Node
 import pandas as pd
 
-
+#todo Date ref
 def get_date(_from):
     now = date.fromisoformat(_from)
     end_date = now + timedelta(days=365)
@@ -31,7 +31,7 @@ def concate_all(path):
         li.append(df)
 
     frame = pd.concat(li, axis=0, ignore_index=True)
-    frame.to_csv('multi.csv')
+    frame.to_csv('multi.csv',index=False)
 
 
 def benchmark(func):
@@ -263,8 +263,23 @@ def my_req_DAM(name):
     df_f.to_csv(f'csv/{name}_DAM.csv', index=False)
 
 
+def getco2(listofdates):
+    for dt in listofdates:
+        datetoreq = dt[:8]
+        print(datetoreq)
+        rsp = requests.get(f'https://www.caiso.com/outlook/SP/History/{datetoreq}/co2.csv?=1659725917675')
+        df = pd.read_csv(io.StringIO(rsp.content.decode('utf-8')))
+        df=df.rename(columns={'Time':'Date'})
+
+        df['Date']=dt[:9]+df['Date'].astype(str)
+        #df['Date']='20210701T'+df['Date'].str.replace(',','-')
+        print('Success')
+        df.to_csv(f'outputs/{dt}.csv', index=False)
+        time.sleep(5)
+
+
 if __name__ == '__main__':
-    my_req_one('HOLLISTR_1_N101', get_date('2021-08-05'))
+    # my_req_one('HOLLISTR_1_N101', get_date('2021-08-05'))
     # my_req_DAM('HOLLISTR_1_N101')
     # name='GRDNWEST_1_N001'
     # # df13 = get_dam(name, '20210701T00:00-0000', '20210715T00:00-0000')
@@ -272,5 +287,6 @@ if __name__ == '__main__':
     # print(df13.head(100))
     # df13.to_csv('tst.csv')
     # my_req_int()
-    # path = '/Users/pavel/PycharmProjects/caiso/csv'
-    # concate_all(path)
+    path = '/Users/pavel/PycharmProjects/caiso/outputs'
+    concate_all(path)
+    #getco2(get_date('2021-08-05'))
