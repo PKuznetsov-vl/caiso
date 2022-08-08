@@ -9,7 +9,6 @@ import requests
 import pandas as pd
 
 
-
 def get_date(start_date, numofdays: int):
     now = date.fromisoformat(start_date)
     end_date = now + timedelta(days=numofdays)
@@ -138,4 +137,3 @@ if __name__ == '__main__':
     get_node_DAM('HOLLISTR_1_N101', get_date('2021-08-05', 2), 'outputs')
     getco2(get_date('2021-08-05'))
     # concate_all(path)
-
