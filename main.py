@@ -6,13 +6,13 @@ import zipfile
 from dateutil import rrule
 from datetime import datetime, timedelta, date
 import requests
-from pycaiso.oasis import Node
 import pandas as pd
 
-#todo Date ref
-def get_date(_from):
-    now = date.fromisoformat(_from)
-    end_date = now + timedelta(days=365)
+
+
+def get_date(start_date, numofdays: int):
+    now = date.fromisoformat(start_date)
+    end_date = now + timedelta(days=numofdays)
 
     listofdays = rrule.rrule(rrule.DAILY, dtstart=now, until=end_date)
     listofdays = list(map(str, listofdays))
@@ -31,7 +31,7 @@ def concate_all(path):
         li.append(df)
 
     frame = pd.concat(li, axis=0, ignore_index=True)
-    frame.to_csv('multi.csv',index=False)
+    frame.to_csv('multi.csv', index=False)
 
 
 def benchmark(func):
@@ -64,59 +64,7 @@ def get_dam(nodename, startdate, enddate):
     return df
 
 
-def my_req_one(name, dates):
-    # df1 = get_prices(name, '20210101T00:00-0000', '20210115T00:00-0000')
-    # time.sleep(6)
-    # df2 = get_prices(name, '20210116T00:00-0000', '20221231T00:00-0000')
-    # time.sleep(6)
-    # df3 = get_prices(name, '20210201T00:00-0000', '20210215T00:00-0000')
-    # time.sleep(6)
-    # df4 = get_prices(name, '202102016T00:00-0000', '20210228T00:00-0000')
-    # time.sleep(6)
-    # df5 = get_prices(name, '20210301T00:00-0000', '20210315T00:00-0000')
-    # time.sleep(6)
-    # df6 = get_prices(name, '20210316T00:00-0000', '20210331T00:00-0000')
-    # time.sleep(6)
-    # df7 = get_prices(name, '20210401T00:00-0000', '20210415T00:00-0000')
-    # time.sleep(6)
-    # df8 = get_prices(name, '20210416T00:00-0000', '20210430T00:00-0000')
-    # time.sleep(6)
-    # df9 = get_prices(name, '20210501T00:00-0000', '20210515T00:00-0000')
-    # time.sleep(6)
-    # df10 = get_prices(name, '20210516T00:00-0000', '20210531T00:00-0000')
-    # time.sleep(6)
-    # df11 = get_prices(name, '20210616T00:00-0000', '20210615T00:00-0000')
-    # time.sleep(6)
-    # df12= get_prices(name, '20210616T00:00-0000', '20210630T00:00-0000')
-    # time.sleep(6)
-    # df13 = get_prices(name, '20210701T00:00-0000', '20210715T00:00-0000')
-    # time.sleep(6)
-    # df14 = get_prices(name, '20210716T00:00-0000', '20220131T00:00-0000')
-    # time.sleep(6)
-    # df15 = get_prices(name, '20210801T00:00-0000', '20210815T00:00-0000')
-    # time.sleep(6)
-    # df16 = get_prices(name, '202108016T00:00-0000', '20210831T00:00-0000')
-    # time.sleep(6)
-    # df17 = get_prices(name, '20210901T00:00-0000', '20210915T00:00-0000')
-    # time.sleep(6)
-    # df18 = get_prices(name, '202109016T00:00-0000', '20210930T00:00-0000')
-    # time.sleep(6)
-    # df19 = get_prices(name, '20211001T00:00-0000', '20211015T00:00-0000')
-    # time.sleep(6)
-    # df20 = get_prices(name, '20211016T00:00-0000', '20211031T00:00-0000')
-    # time.sleep(6)
-    # df21 = get_prices(name, '20211101T00:00-0000', '20211115T00:00-0000')
-    # time.sleep(6)
-    # df22 = get_prices(name, '20211116T00:00-0000', '20211130T00:00-0000')
-    # time.sleep(6)
-    # df23 = get_prices(name, '20211201T00:00-0000', '20211215T00:00-0000')
-    # time.sleep(6)
-    # df24 = get_prices(name, '20211216T00:00-0000', '2021231T00:00-0000')
-    # time.sleep(6)
-    # df25 = get_prices(name, '20220101T00:00-0000', '20220115T00:00-0000')
-    # time.sleep(6)
-    # df26 = get_prices(name, '20220116T00:00-0000', '20220131T00:00-0000')
-    # time.sleep(6)
+def get_node_info(name, dates, path):
     list_of_csv = []
     for day in range(len(dates) - 1):
         time.sleep(6)
@@ -124,35 +72,10 @@ def my_req_one(name, dates):
         print(df.head())
         list_of_csv.append(df)
     print(len(list_of_csv))
-    # df27 = get_prices(name, '20220201T00:00-0000', '20220215T00:00-0000')
-    # time.sleep(6)
-    # df28 = get_prices(name, '20220216T00:00-0000', '20220228T00:00-0000')
-    # time.sleep(6)
-    # df29 = get_prices(name, '20220301T00:00-0000', '20220315T00:00-0000')
-    # time.sleep(6)
-    # df30 = get_prices(name, '20220316T00:00-0000', '20220331T00:00-0000')
-    # time.sleep(6)
-    # df31 = get_prices(name, '20220401T00:00-0000', '20220415T00:00-0000')
-    # time.sleep(6)
-    # df32 = get_prices(name, '20220416T00:00-0000', '20220430T00:00-0000')
-    # time.sleep(6)
-    # df33 = get_prices(name, '20220501T00:00-0000', '20220515T00:00-0000')
-    # time.sleep(6)
-    # df34 = get_prices(name, '20220515T00:00-0000', '20220531T00:00-0000')
-    # time.sleep(6)
-    # df35 = get_prices(name, '20220601T00:00-0000', '20220615T00:00-0000')
-    # time.sleep(6)
-    # df36 = get_prices(name, '20220616T00:00-0000', '20220630T00:00-0000')
-    # time.sleep(6)
-    # df37 = get_prices(name, '20220701T00:00-0000', '20220715T00:00-0000')
-    # time.sleep(6)
-    #
-    # df_f = pd.concat([#df13, df14, df15, df16, df17, df18, df19, df20, df21, df22, df23, df24, df25, df26,
-    #                  df27, df28,
-    #                   df29, df30, df31, df32, df33, df34, df35, df36,
-    #                   df37], ignore_index=True)
-    # print('Success')
-    # df_f.to_csv(f'csv/{name}.csv', index=False)
+
+    df_f = pd.concat(list_of_csv, ignore_index=True)
+    print('Success')
+    df_f.to_csv(f'{path}/{name}.csv', index=False)
 
 
 def my_req_int():
@@ -181,86 +104,18 @@ def my_req_int():
         df_f.to_csv(f'csv/{name}.csv', index=False)
 
 
-def my_req_DAM(name):
-    # df1 = get_prices(name, '20210101T00:00-0000', '20210115T00:00-0000')
-    # time.sleep(6)
-    # df2 = get_prices(name, '20210116T00:00-0000', '20221231T00:00-0000')
-    # time.sleep(6)
-    # df3 = get_prices(name, '20210201T00:00-0000', '20210215T00:00-0000')
-    # time.sleep(6)
-    # df4 = get_prices(name, '202102016T00:00-0000', '20210228T00:00-0000')
-    # time.sleep(6)
-    # df5 = get_prices(name, '20210301T00:00-0000', '20210315T00:00-0000')
-    # time.sleep(6)
-    # df6 = get_prices(name, '20210316T00:00-0000', '20210331T00:00-0000')
-    # time.sleep(6)
-    # df7 = get_prices(name, '20210401T00:00-0000', '20210415T00:00-0000')
-    # time.sleep(6)
-    # df8 = get_prices(name, '20210416T00:00-0000', '20210430T00:00-0000')
-    # time.sleep(6)
-    # df9 = get_prices(name, '20210501T00:00-0000', '20210515T00:00-0000')
-    # time.sleep(6)
-    # df10 = get_prices(name, '20210516T00:00-0000', '20210531T00:00-0000')
-    # time.sleep(6)
-    # df11 = get_prices(name, '20210616T00:00-0000', '20210615T00:00-0000')
-    # time.sleep(6)
-    # df12= get_prices(name, '20210616T00:00-0000', '20210630T00:00-0000')
-    # time.sleep(6)
-    df13 = get_dam(name, '20210701T00:00-0000', '20210715T00:00-0000')
-    time.sleep(6)
-    df14 = get_dam(name, '20210716T00:00-0000', '20210731T00:00-0000')
-    time.sleep(6)
-    df15 = get_dam(name, '20210801T00:00-0000', '20210815T00:00-0000')
-    time.sleep(6)
-    df16 = get_dam(name, '202108016T00:00-0000', '20210831T00:00-0000')
-    time.sleep(6)
-    df17 = get_dam(name, '20210901T00:00-0000', '20210915T00:00-0000')
-    time.sleep(6)
-    df18 = get_dam(name, '202109016T00:00-0000', '20210930T00:00-0000')
-    time.sleep(6)
-    df19 = get_dam(name, '20211001T00:00-0000', '20211015T00:00-0000')
-    time.sleep(6)
-    df20 = get_dam(name, '20211016T00:00-0000', '20211031T00:00-0000')
-    time.sleep(6)
-    df21 = get_dam(name, '20211101T00:00-0000', '20211115T00:00-0000')
-    time.sleep(6)
-    df22 = get_dam(name, '20211116T00:00-0000', '20211130T00:00-0000')
-    time.sleep(6)
-    df23 = get_dam(name, '20211201T00:00-0000', '20211215T00:00-0000')
-    time.sleep(6)
-    df24 = get_dam(name, '20211216T00:00-0000', '20211231T00:00-0000')
-    time.sleep(6)
-    df25 = get_dam(name, '20220101T00:00-0000', '20220115T00:00-0000')
-    time.sleep(6)
-    df26 = get_dam(name, '20220116T00:00-0000', '20220131T00:00-0000')
-    time.sleep(6)
-    df27 = get_dam(name, '20220201T00:00-0000', '20220215T00:00-0000')
-    time.sleep(6)
-    df28 = get_dam(name, '20220216T00:00-0000', '20220228T00:00-0000')
-    time.sleep(6)
-    df29 = get_dam(name, '20220301T00:00-0000', '20220315T00:00-0000')
-    time.sleep(6)
-    df30 = get_dam(name, '20220316T00:00-0000', '20220331T00:00-0000')
-    time.sleep(6)
-    df31 = get_dam(name, '20220401T00:00-0000', '20220415T00:00-0000')
-    time.sleep(6)
-    df32 = get_dam(name, '20220416T00:00-0000', '20220430T00:00-0000')
-    time.sleep(6)
-    df33 = get_dam(name, '20220501T00:00-0000', '20220515T00:00-0000')
-    time.sleep(6)
-    df34 = get_dam(name, '20220515T00:00-0000', '20220531T00:00-0000')
-    time.sleep(6)
-    df35 = get_dam(name, '20220601T00:00-0000', '20220615T00:00-0000')
-    time.sleep(6)
-    df36 = get_dam(name, '20220616T00:00-0000', '20220630T00:00-0000')
-    time.sleep(6)
-    df37 = get_dam(name, '20220701T00:00-0000', '20220715T00:00-0000')
-    time.sleep(6)
-    df38 = get_dam(name, '20220716T00:00-0000', '20220731T00:00-0000')
-    df_f = pd.concat([df13, df14, df15, df16, df17, df18, df19, df20, df21, df22, df23, df24, df25, df26,
-                      df27, df28, df29, df30, df31, df32, df33, df34, df35, df36, df37, df38], ignore_index=True)
+def get_node_DAM(name, dates, path):
+    list_of_csv = []
+    for day in range(len(dates) - 1):
+        time.sleep(6)
+        df = get_dam(name, dates[day], dates[day + 1])
+        print(df.head())
+        list_of_csv.append(df)
+    print(len(list_of_csv))
+
+    df_f = pd.concat(list_of_csv, ignore_index=True)
     print('Success')
-    df_f.to_csv(f'csv/{name}_DAM.csv', index=False)
+    df_f.to_csv(f'{path}/{name}.csv', index=False)
 
 
 def getco2(listofdates):
@@ -269,24 +124,18 @@ def getco2(listofdates):
         print(datetoreq)
         rsp = requests.get(f'https://www.caiso.com/outlook/SP/History/{datetoreq}/co2.csv?=1659725917675')
         df = pd.read_csv(io.StringIO(rsp.content.decode('utf-8')))
-        df=df.rename(columns={'Time':'Date'})
+        df = df.rename(columns={'Time': 'Date'})
 
-        df['Date']=dt[:9]+df['Date'].astype(str)
-        #df['Date']='20210701T'+df['Date'].str.replace(',','-')
+        df['Date'] = dt[:9] + df['Date'].astype(str)
+        # df['Date']='20210701T'+df['Date'].str.replace(',','-')
         print('Success')
         df.to_csv(f'outputs/{dt}.csv', index=False)
         time.sleep(5)
 
 
 if __name__ == '__main__':
-    # my_req_one('HOLLISTR_1_N101', get_date('2021-08-05'))
-    # my_req_DAM('HOLLISTR_1_N101')
-    # name='GRDNWEST_1_N001'
-    # # df13 = get_dam(name, '20210701T00:00-0000', '20210715T00:00-0000')
-    # df13 = get_prices(name, '20220802T04:00-0000', '20220802T05:00-0000')
-    # print(df13.head(100))
-    # df13.to_csv('tst.csv')
-    # my_req_int()
-    path = '/Users/pavel/PycharmProjects/caiso/outputs'
-    concate_all(path)
-    #getco2(get_date('2021-08-05'))
+    get_node_info('HOLLISTR_1_N101', get_date('2021-08-05', 2), 'csv')
+    get_node_DAM('HOLLISTR_1_N101', get_date('2021-08-05', 2), 'outputs')
+    getco2(get_date('2021-08-05'))
+    # concate_all(path)
+
