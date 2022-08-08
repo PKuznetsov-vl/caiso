@@ -114,7 +114,7 @@ def get_node_DAM(name, dates, path):
 
     df_f = pd.concat(list_of_csv, ignore_index=True)
     print('Success')
-    df_f.to_csv(f'{path}/{name}.csv', index=False)
+    df_f.to_csv(f'{path}/{name}_DAM.csv', index=False)
 
 
 def getco2(listofdates):
