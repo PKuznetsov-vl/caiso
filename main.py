@@ -9,6 +9,9 @@ import requests
 import pandas as pd
 
 #TODO date to iso
+from dotenv import load_dotenv
+
+
 def get_date(start_date, numofdays: int):
     now = date.fromisoformat(start_date)
     end_date = now + timedelta(days=numofdays)
@@ -133,10 +136,16 @@ def getco2(listofdates):
 
 
 if __name__ == '__main__':
+    load_dotenv()
+    air_lst = ['SFO', 'SJC', 'OAK', 'LAX']
+    get_node = os.getenv('NODE_BOOL')
+    get_DAM = os.getenv('DAM_BOOL')
+    get_CO2 = os.getenv('CO2_BOOL')
     if get_node:
-    # get_node_info('HOLLISTR_1_N101', get_date('2021-08-05', 2), 'csv')
-    elif get_DAM:
-    # get_node_DAM('HOLLISTR_1_N101', get_date('2021-08-05', 2), 'outputs')
-    # getco2(get_date('2021-08-05'))
-        print(get_date('2021-08-05',1))
+        get_node_info('HOLLISTR_1_N101', get_date('2021-08-05', 2), 'csv')
+    if get_DAM:
+        get_node_DAM('HOLLISTR_1_N101', get_date('2021-08-05', 2), 'outputs')
+    if get_CO2:
+            getco2(get_date('2021-08-05',365))
+            print(get_date('2021-08-05',1))
     # concate_all(path)
