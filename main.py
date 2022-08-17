@@ -77,7 +77,7 @@ def get_node_info(name, dates, path):
     df_f.to_csv(f'{path}/{name}.csv', index=False)
 
 
-def my_req_int():
+def get_all_nodes():
     df = pd.read_csv('LMPLocations.csv')
     names_lst = df['name'].tolist()
 
@@ -133,8 +133,10 @@ def getco2(listofdates):
 
 
 if __name__ == '__main__':
+    if get_node:
     # get_node_info('HOLLISTR_1_N101', get_date('2021-08-05', 2), 'csv')
+    elif get_DAM:
     # get_node_DAM('HOLLISTR_1_N101', get_date('2021-08-05', 2), 'outputs')
     # getco2(get_date('2021-08-05'))
-    print(get_date('2021-08-05',1))
+        print(get_date('2021-08-05',1))
     # concate_all(path)
