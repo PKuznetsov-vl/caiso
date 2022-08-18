@@ -23,7 +23,7 @@ def get_date(start_date, numofdays: int):
     return listofdays
 
 
-def concate_all(path):
+def concate_all(path,out_path):
     all_files = glob.glob(os.path.join(path, "*.csv"))
 
     li = []
@@ -33,7 +33,7 @@ def concate_all(path):
         li.append(df)
 
     frame = pd.concat(li, axis=0, ignore_index=True)
-    frame.to_csv('multi.csv', index=False)
+    frame.to_csv(out_path, index=False)
 
 
 def benchmark(func):
@@ -141,11 +141,24 @@ if __name__ == '__main__':
     get_node = os.getenv('NODE_BOOL')
     get_DAM = os.getenv('DAM_BOOL')
     get_CO2 = os.getenv('CO2_BOOL')
+    get_all = os.getenv('ALL_BOOL')
+    Num = int(os.getenv('NUM_OF_DAYS'))
+    start_date=os.getenv('START_DATE')
+    out_path = os.getenv('NODE_PATH')
+    out_path_DAM = os.getenv('DAM_PATH')
     if get_node:
-        get_node_info('HOLLISTR_1_N101', get_date('2021-08-05', 2), 'csv')
+        os.mkdir('csv')
+        get_node_info('HOLLISTR_1_N101', get_date(start_date, Num ), 'csv')
     if get_DAM:
-        get_node_DAM('HOLLISTR_1_N101', get_date('2021-08-05', 2), 'outputs')
+        os.mkdir('outputs')
+        get_node_DAM('HOLLISTR_1_N101', get_date('2021-08-05', Num), 'outputs')
+        #concate_all(out_path_DAM,DAM)
     if get_CO2:
+            os.mkdir('co2_outputs')
             getco2(get_date('2021-08-05',365))
             print(get_date('2021-08-05',1))
-    # concate_all(path)
+
+            concate_all('co2_outputs', 'CO2.csv')
+    if get_all:
+        os.mkdir('csv')
+        get_all_nodes()
