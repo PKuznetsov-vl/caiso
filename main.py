@@ -79,7 +79,7 @@ def get_node_info(name, dates, path):
     print('Success')
     df_f.to_csv(f'{path}/{name}.csv', index=False)
 
-""" Исползуйте подход указанный ниже чтобы переписать мой хардкод
+""" Исползуйте подход указанный ниже чтобы переписать мой хардкод либо https://arrow.readthedocs.io/en/stable/(мб она быстрее)
 def get_date(start_date, numofdays: int):
     now = date.fromisoformat(start_date)
     end_date = now + timedelta(days=numofdays)
