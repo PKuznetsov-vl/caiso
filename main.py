@@ -79,7 +79,38 @@ def get_node_info(name, dates, path):
     print('Success')
     df_f.to_csv(f'{path}/{name}.csv', index=False)
 
+""" Исползуйте подход указанный ниже чтобы переписать мой хардкод
+def get_date(start_date, numofdays: int):
+    now = date.fromisoformat(start_date)
+    end_date = now + timedelta(days=numofdays)
+    listofdays = rrule.rrule(rrule.DAILY, dtstart=now, until=end_date)
+    
 
+
+ это пример чтобы не подить большой массив
+# Вывод 5 дней от даты старта
+print(list(rrule.rrule(rrule.DAILY, count=5, dtstart=parse("20201202T090000"))))
+ 
+# Вывод 3 дней от даты старта с интервалом 10
+print(list(rrule.rrule(rrule.DAILY, interval=10, count=3, dtstart=parse("20201202T090000"))))
+ 
+# Вывод 3 дней с интервалом неделя
+print(list(rrule.rrule(rrule.WEEKLY, count=3, dtstart=parse("20201202T090000"))))
+ 
+# Вывод 3 дней с интервалом месяц
+print(list(rrule.rrule(rrule.MONTHLY, count=3, dtstart=parse("20201202T090000"))))
+ 
+# Вывод 3 дней с интервалом год
+print(list(rrule.rrule(rrule.YEARLY, count=3, dtstart=parse("20201202T090000"))))
+    
+    listofdays = list(map(lambda day: str(day.isoformat()) + 'Z', listofdays)) - с этой строки вам не понадобится
+    # listofdays = list(map(listofdays, listofdays))
+    # listofdays = list(
+    #     map(lambda x: x.replace('-', '').replace(' ', 'T').rstrip(listofdays[0][14:]) + '00:00-0000', listofdays))
+    return listofdays
+
+
+"""
 def get_all_nodes():
     df = pd.read_csv('LMPLocations.csv')
     names_lst = df['name'].tolist()
@@ -136,29 +167,18 @@ def getco2(listofdates):
 
 
 if __name__ == '__main__':
-    load_dotenv()
-    air_lst = ['SFO', 'SJC', 'OAK', 'LAX']
-    get_node = os.getenv('NODE_BOOL')
-    get_DAM = os.getenv('DAM_BOOL')
-    get_CO2 = os.getenv('CO2_BOOL')
-    get_all = os.getenv('ALL_BOOL')
-    Num = int(os.getenv('NUM_OF_DAYS'))
-    start_date=os.getenv('START_DATE')
-    out_path = os.getenv('NODE_PATH')
-    out_path_DAM = os.getenv('DAM_PATH')
-    if get_node:
-        os.mkdir('csv')
-        get_node_info('HOLLISTR_1_N101', get_date(start_date, Num ), 'csv')
-    if get_DAM:
-        os.mkdir('outputs')
-        get_node_DAM('HOLLISTR_1_N101', get_date('2021-08-05', Num), 'outputs')
-        #concate_all(out_path_DAM,DAM)
-    if get_CO2:
-            os.mkdir('co2_outputs')
-            getco2(get_date('2021-08-05',365))
-            print(get_date('2021-08-05',1))
-
-            concate_all('co2_outputs', 'CO2.csv')
-    if get_all:
-        os.mkdir('csv')
-        get_all_nodes()
+    # load_dotenv()
+    # air_lst = ['SFO', 'SJC', 'OAK', 'LAX']
+    # get_node = os.getenv('NODE_BOOL')
+    # get_DAM = os.getenv('DAM_BOOL')
+    # get_CO2 = os.getenv('CO2_BOOL')
+    # get_all = os.getenv('ALL_BOOL')
+    # Num = int(os.getenv('NUM_OF_DAYS'))
+    # start_date=os.getenv('START_DATE')
+    # node_name = os.getenv('NODE_NAME')
+    node_name = '0096WD_7_N001'
+    # get_node_DAM(node_name, get_date('2022-08-24', Num), 'outputs')
+    df1 = get_prices(node_name, '20220824T09:00-0000', '20220824T23:55-0000')
+    df = get_dam(node_name, '20220824T09:00-0000', '20220824T23:55-0000')
+    df.to_csv('tst.csv')
+    df1.to_csv('tst2.csv')
