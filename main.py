@@ -168,7 +168,6 @@ def getco2(listofdates):
 
 if __name__ == '__main__':
     # load_dotenv()
-    # air_lst = ['SFO', 'SJC', 'OAK', 'LAX']
     # get_node = os.getenv('NODE_BOOL')
     # get_DAM = os.getenv('DAM_BOOL')
     # get_CO2 = os.getenv('CO2_BOOL')
