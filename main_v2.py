@@ -12,7 +12,7 @@ logging.basicConfig(filename='logerrors.txt', level=logging.INFO)
 
 @retry(stop=stop_after_attempt(3))
 
-def get_prices(nodename, startdate, enddate):
+def get_rtm_prices(nodename, startdate, enddate):
     retry_count = 3
     retry_delay = 6  # seconds
     try:
@@ -94,6 +94,10 @@ def get_dam(nodename, startdate, enddate):
 
 
 if __name__ == '__main__':
+    a=Caiso()
+    for node in locations:
+        a.Node_name=node
+        a.get_prices()
     df = pd.read_csv('LMPLocations.csv')
     names_lst = df['name'].tolist()
     start_date = datetime.datetime(2022, 4, 30, 9, 0)
