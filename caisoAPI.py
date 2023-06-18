@@ -7,6 +7,7 @@ import logging
 import pandas as pd
 from tenacity import retry, retry_if_exception_type, wait_fixed, stop_after_attempt, RetryError
 
+
 class Caiso:
     """
     Class for interacting with the Caiso API.
@@ -38,7 +39,7 @@ class Caiso:
     __DELAY = 6
     __REFRESH_TIME = 300
     __slots__ = ["sess", "logger", "nodename"]
-    
+
     def __init__(self, sess=None, logger=None):
         """
         Initialize the Caiso object with a session and nodename.
@@ -68,7 +69,8 @@ class Caiso:
             self.sess = requests.Session()
             self.logger.info("Session successfully refreshed")
 
-    @retry(retry=retry_if_exception_type(requests.exceptions.HTTPError), wait=wait_fixed(__DELAY), stop=stop_after_attempt(__ATTEMPTS))
+    @retry(retry=retry_if_exception_type(requests.exceptions.HTTPError), wait=wait_fixed(__DELAY),
+           stop=stop_after_attempt(__ATTEMPTS))
     def __get_data(self, startdate, enddate, queryname, market_run_id):
         """
         Common logic to retrieve data from the Caiso API.
@@ -86,25 +88,26 @@ class Caiso:
         """
         if self.nodename is None:
             return None
-        
+
         try:
             starttime = startdate.strftime('%Y%m%dT%H:%M-0000')
             endtime = enddate.strftime('%Y%m%dT%H:%M-0000')
             rsp = self.sess.get(
-                f'http://oasis.caiso.com/oasisapi/SingleZip?queryname={queryname}&startdatetime={starttime}&enddatetime={endtime}&version=1&market_run_id={market_run_id}&node={self.nodename}&resultformat=6',
+                f'http://oasis.caiso.com/oasisapi/SingleZip?queryname={queryname}&startdatetime={starttime}'
+                f'&enddatetime={endtime}&version=1&market_run_id={market_run_id}&node={self.nodename}&resultformat=6',
                 timeout=10)
             rsp.raise_for_status()
             z = zipfile.ZipFile(io.BytesIO(rsp.content))
             df = pd.read_csv(z.open(z.namelist()[0]),
-                            usecols=["INTERVALSTARTTIME_GMT",
-                                     "INTERVALENDTIME_GMT",
-                                     "NODE",
-                                     "MARKET_RUN_ID",
-                                     "LMP_TYPE",
-                                     "MW",
-                                     "OPR_INTERVAL"],
-                            parse_dates=["INTERVALSTARTTIME_GMT", "INTERVALENDTIME_GMT"],
-                            dtype={ "NODE": str,
+                             usecols=["INTERVALSTARTTIME_GMT",
+                                      "INTERVALENDTIME_GMT",
+                                      "NODE",
+                                      "MARKET_RUN_ID",
+                                      "LMP_TYPE",
+                                      "MW",
+                                      "OPR_INTERVAL"],
+                             parse_dates=["INTERVALSTARTTIME_GMT", "INTERVALENDTIME_GMT"],
+                             dtype={"NODE": str,
                                     "MARKET_RUN_ID": str,
                                     "LMP_TYPE": str,
                                     "MW": float,
@@ -116,7 +119,8 @@ class Caiso:
                 if isinstance(e, requests.exceptions.ConnectionError):
                     logging.warning("You can only send requests from USA")
                 logging.error(
-                    f"Request for {startdate}-{enddate} {self.nodename} in market_run_id={market_run_id}: Error occurred: {str(e)}")
+                    f"Request for {startdate}-{enddate} {self.nodename} "
+                    f"in market_run_id={market_run_id}: Error occurred: {str(e)}")
                 return None
 
     def get_prices(self, startdate, enddate):
@@ -134,7 +138,7 @@ class Caiso:
             return self.__get_data(startdate, enddate, 'PRC_INTVL_LMP', 'RTM')
         except RetryError:
             return None
-        
+
     def get_dam(self, startdate, enddate):
         """
         Retrieve DAM (Day-Ahead Market) data from the Caiso API for the specified date range.
@@ -150,14 +154,14 @@ class Caiso:
             return self.__get_data(startdate, enddate, 'PRC_LMP', 'DAM')
         except RetryError:
             return None
-        
+
     def __setattr__(self, name, value):
         """Set attribute value if it's a valid attribute."""
         if name in self.__slots__ or name.startswith("_Caiso__"):
             super().__setattr__(name, value)
         else:
             raise AttributeError("Cannot add new attributes to Caiso objects")
-        
+
     def __repr__(self):
         """Return a string representation of the Caiso object."""
         return f"Caiso(sess={self.sess}, nodename={self.nodename})"
