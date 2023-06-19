@@ -115,16 +115,14 @@ class Caiso:
                                     "OPR_INTERVAL": int
                                     })
             return df
-        except Exception as e:
+        except  Exception as e:
+            logging.error(
+                f"Request for {startdate}-{enddate} {self.nodename} "
+                f"in market_run_id={market_run_id}: Error occurred: {str(e)}")
+            if isinstance(e, requests.exceptions.ConnectionError):
+                logging.warning("You can only send requests from USA")
 
-            if not isinstance(e, requests.exceptions.HTTPError):
-                logging.error(e)
-                if isinstance(e, requests.exceptions.ConnectionError):
-                    logging.warning("You can only send requests from USA")
-                logging.error(
-                    f"Request for {startdate}-{enddate} {self.nodename} "
-                    f"in market_run_id={market_run_id}: Error occurred: {str(e)}")
-                return None
+        return None
 
     def get_prices(self, startdate, enddate):
         """
