@@ -87,6 +87,7 @@ class Caiso:
         :rtype: pandas.DataFrame
         """
         if self.nodename is None:
+            print('No name')
             return None
 
         try:
@@ -95,7 +96,7 @@ class Caiso:
             rsp = self.sess.get(
                 f'http://oasis.caiso.com/oasisapi/SingleZip?queryname={queryname}&startdatetime={starttime}'
                 f'&enddatetime={endtime}&version=1&market_run_id={market_run_id}&node={self.nodename}&resultformat=6',
-                timeout=10)
+                timeout=300)
             rsp.raise_for_status()
             z = zipfile.ZipFile(io.BytesIO(rsp.content))
             df = pd.read_csv(z.open(z.namelist()[0]),
@@ -115,7 +116,9 @@ class Caiso:
                                     })
             return df
         except Exception as e:
+
             if not isinstance(e, requests.exceptions.HTTPError):
+                logging.error(e)
                 if isinstance(e, requests.exceptions.ConnectionError):
                     logging.warning("You can only send requests from USA")
                 logging.error(
@@ -136,7 +139,8 @@ class Caiso:
         """
         try:
             return self.__get_data(startdate, enddate, 'PRC_INTVL_LMP', 'RTM')
-        except RetryError:
+        except RetryError as e:
+            logging.error(e)
             return None
 
     def get_dam(self, startdate, enddate):
@@ -152,7 +156,8 @@ class Caiso:
         """
         try:
             return self.__get_data(startdate, enddate, 'PRC_LMP', 'DAM')
-        except RetryError:
+        except RetryError as e:
+            logging.error(e)
             return None
 
     def __setattr__(self, name, value):
